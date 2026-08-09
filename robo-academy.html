@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robo Academy</title>
+    <link rel="icon" type="image/png" href="images/img1.png">
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #141414;
+            --text-color: #f1f1f1;
+            --text-muted: #888888;
+            --accent-color: #ff8c00;
+            --border-color: #222222;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding-bottom: 72px;
+        }
+
+        /* الشريط السفلي للتنقل */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #0a0a0a;
+            border-top: 1px solid var(--border-color);
+            padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px)) 4px;
+            z-index: 1500;
+        }
+
+        .bottom-nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            flex: 1;
+            color: #8a8a8a;
+            text-decoration: none;
+            font-size: 0.68rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.25s ease;
+            padding: 4px 2px;
+        }
+
+        .bottom-nav-link svg {
+            width: 24px;
+            height: 24px;
+            transition: all 0.25s ease;
+        }
+
+        .bottom-nav-link.active {
+            color: #ffffff;
+        }
+
+        .bottom-nav-link.active svg {
+            color: var(--accent-color);
+        }
+
+        .bottom-nav-link:not(.active) svg {
+            opacity: 0.65;
+        }
+
+        /* الهيكل العلوي */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 5%;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .logo-container h1 {
+            font-size: 1.3rem;
+            color: var(--text-color);
+            letter-spacing: 0.5px;
+        }
+
+        .logo-container h1 span {
+            color: var(--accent-color);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .lang-selector {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .menu-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* قائمة الشاشة الكاملة المنسدلة */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .close-menu-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            padding: 40px 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .mobile-nav-links li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.15rem;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .mobile-nav-links li a:hover, .mobile-nav-links li a.active {
+            color: var(--accent-color);
+        }
+
+        .mobile-auth-buttons {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .mobile-auth-buttons a {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-dark {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-light {
+            background: #ffffff;
+            color: #000000;
+            font-weight: bold;
+        }
+
+        /* الأقسام العامة والتنقل */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active-section {
+            display: block;
+        }
+
+        /* قسم الواجهة الرئيسي الأول */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px 20px;
+            background: radial-gradient(circle at center 30%, #151515 0%, var(--bg-color) 75%);
+        }
+
+        .hero h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 22px;
+            line-height: 1.3;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-btn {
+            display: inline-block;
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid #ff8c00;
+            padding: 12px 45px;
+            border-radius: 30px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .hero-btn:hover {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .partners-title {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+            font-weight: 400;
+        }
+
+        .partners-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            opacity: 0.8;
+            flex-wrap: wrap;
+        }
+
+        .partner-item {
+            color: #b0b0b0;
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* الحاوية العامة لاستغلال المساحات */
+        .container {
+            max-width: 600px;
+            margin: 20px auto 50px auto;
+            padding: 0 16px;
+        }
+
+        /* قسم "لماذا التقنية والبرمجة؟" */
+        .why-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px 24px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .why-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 35px;
+            letter-spacing: -0.5px;
+        }
+
+        .why-block {
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid #222222;
+        }
+
+        .why-block:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .why-block h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 14px;
+        }
+
+        .why-block p {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            line-height: 1.75;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* بطاقات الميزات الإضافية للأكاديمية */
+        .section-main-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 35px 20px 25px 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 14px;
+            font-weight: bold;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            max-width: 420px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .illustration-box {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            border: 1px solid #2a2a2a;
+            font-size: 1.05rem;
+            overflow: hidden;
+        }
+
+        .illustration-box img {
+            max-width: 100%;
+            max-height: 260px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* تنسيق خاص لقسم الدورات والبطاقات */
+        .course-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            text-align: right;
+        }
+
+        .course-card h3 {
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .course-platform {
+            color: var(--accent-color);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .course-skills-title {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-skills-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .course-skills-list li {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+
+        /* مؤشر احترافي بدلاً من الرموز التعبيرية */
+        .list-bullet {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .course-info-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .course-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .course-price {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .course-btn {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid var(--accent-color);
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .course-btn:hover {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        /* تنسيق قسم عرض المقالات الكاملة داخل المدونة */
+        .blog-post-content {
+            display: none;
+            background: #111111;
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-align: right;
+        }
+
+        .blog-post-content.active {
+            display: block;
+        }
+
+        .blog-post-content h4 {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            margin-top: 15px;
+        }
+
+        .blog-post-content p {
+            color: #cccccc;
+            margin-bottom: 12px;
+        }
+
+        /* قسم الأسئلة الشائعة */
+        .section-title {
+            font-size: 1.7rem;
+            margin-bottom: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .faq-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 9px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--accent-color);
+            color: #000;
+            border-color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .faq-answer {
+            padding: 0 20px 18px 20px;
+            color: var(--text-muted);
+            display: none;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            line-height: 1.7;
+            font-size: 0.9rem;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        .faq-question span {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        /* تنسيقات قسم تواصل معنا المحدثة */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card svg {
+            width: 36px;
+            height: 36px;
+            fill: var(--accent-color);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-card h3 {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .contact-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0;
+            direction: ltr;
+        }
+
+        .contact-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-3px);
+            background: #1c1c1c;
+        }
+
+        .contact-card:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* تنسيق قسم المطور الجديد */
+        .developer-avatar-container {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-color);
+            margin: 0 auto 20px auto;
+            overflow: hidden;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .developer-avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .developer-avatar-placeholder {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* تنسيق زر الواتساب العائم */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            background-color: #25D366;
+            color: #FFF;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            animation: whatsapp-pulse 2s infinite;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #20ba5a;
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .whatsapp-icon-float {
+            width: 35px;
+            height: 35px;
+            fill: #FFFFFF;
+        }
+
+        @keyframes whatsapp-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
+
+        /* الفوتر */
+        footer {
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 45px 5% 25px 5%;
+            margin-top: 60px;
+            text-align: right;
+        }
+
+        .footer-top {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 35px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 25px;
+        }
+
+        .footer-logo h2 {
+            font-size: 1.4rem;
+            color: var(--text-color);
+        }
+
+        .footer-logo h2 span {
+            color: var(--accent-color);
+        }
+
+        .footer-tagline {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            margin-top: 25px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- زر الواتساب العائم -->
+    <a href="https://wa.me/9647829033849" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="تواصل معنا عبر واتساب">
+        <svg class="whatsapp-icon-float" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.11 17.205c-.372 0-1.088 1.39-1.518 1.39a.63.63 0 0 1-.315-.1c-.802-.402-1.675-1.233-2.415-2.37-1.09-1.669-1.719-3.293-1.938-4.27a.952.952 0 0 1 .325-.973c.158-.13.365-.325.548-.501a.348.348 0 0 0 .115-.24c0-.142-.292-.982-.416-1.32-.124-.33-.254-.28-.37-.285-.304-.015-.65-.015-.994-.015s-.915.127-1.394.634c-.48.508-1.832 1.787-1.832 4.358 0 2.572 1.882 5.051 2.144 5.397.262.347 3.654 5.759 8.948 7.822 4.294 1.679 5.168 1.348 6.096 1.264.928-.084 2.99-1.223 3.415-2.404.425-1.181.425-2.193.298-2.404-.127-.211-.472-.33-.993-.59z"/>
+            <path d="M16 0C7.163 0 0 7.163 0 16c0 2.825.738 5.485 2.025 7.795L.5 31.5l7.957-2.085A15.908 15.908 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333c-2.457 0-4.755-.708-6.703-1.934l-.48-.303-4.996 1.309 1.332-4.869-.313-.504A13.257 13.257 0 0 1 2.667 16c0-7.353 5.98-13.333 13.333-13.333S29.333 8.647 29.333 16 23.353 29.333 16 29.333z"/>
+        </svg>
+    </a>
+
+    <!-- الهيكل العلوي -->
+    <header>
+        <div class="logo-container">
+            <img src="images/img1.png" alt="Robo Academy" class="logo-icon">
+            <h1><span style="color: var(--accent-color);">R</span>obo Academy</h1>
+        </div>
+        <div class="header-left">
+            <button class="lang-selector">
+                العربية ▾
+            </button>
+            <button class="menu-toggle-btn" id="openMenu">
+                ☰
+            </button>
+        </div>
+    </header>
+
+    <!-- قائمة الشاشة الكاملة المنسدلة -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="logo-container">
+                <img src="images/img1.png" alt="Robo Academy" class="logo-icon">
+                <h1><span style="color: var(--accent-color);">R</span>obo Academy</h1>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="lang-selector">العربية ▾</button>
+                <button class="close-menu-btn" id="closeMenu">✕</button>
+            </div>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a class="nav-link active" data-target="home-section">الرئيسية</a></li>
+            <li><a class="nav-link" data-target="courses-section">الدورات</a></li>
+            <li><a class="nav-link" data-target="store-section">المتجر</a></li>
+            <li><a class="nav-link" data-target="exams-section">الاختبارات التدريبية</a></li>
+            <li><a class="nav-link" data-target="blog-section">المدونة</a></li>
+            <li><a class="nav-link" data-target="news-section">الأخبار</a></li>
+            <li><a class="nav-link" data-target="faq-section">الأسئلة الشائعة</a></li>
+            <li><a class="nav-link" data-target="developer-section">عن المطور</a></li>
+            <li><a class="nav-link" data-target="contact-section">تواصل معنا</a></li>
+        </ul>
+        <div class="mobile-auth-buttons">
+            <a href="#" class="btn-dark">تسجيل الدخول</a>
+            <a href="#" class="btn-light">إنشاء حساب</a>
+        </div>
+    </div>
+
+    <!-- ================= قسم الرئيسية ================= -->
+    <div id="home-section" class="page-section active-section">
+        <section class="hero">
+            <h2>نقطة انطلاقك في<br>التقنية والبرمجة</h2>
+            <a href="#" class="hero-btn nav-link" data-target="courses-section">ابدأ الآن</a>
+            <p class="partners-title">احصل على شهادات من</p>
+            <div class="partners-logos">
+                <span class="partner-item">aws</span>
+                <span class="partner-item">ISACA</span>
+                <span class="partner-item">EC-Council</span>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="why-section">
+                <h2 class="why-title">لماذا التقنية والبرمجة؟</h2>
+                <div class="why-block">
+                    <h3>رسالة وطنية</h3>
+                    <p>مجالات التقنية والبرمجة من أكثر المجالات طلباً، خاصة مع التطور الرقمي الكبير. الشركات تحتاج إلى كوادر وطنية مؤهلة، وانضمامك لهذا المجال يعني أنك لا تبني مستقبلك فقط، بل تساهم في حماية وطنك أيضاً</p>
+                </div>
+                <div class="why-block">
+                    <h3>رواتب مجزية</h3>
+                    <p>الخريجون الجدد في مجال التقنية يبدؤون برواتب تنافسية، وتصل المناصب العليا إلى مستويات متقدمة، خصوصاً في القطاعات الحساسة. دوراتنا التدريبية تؤهلك بسرعة لتلك الوظائف</p>
+                </div>
+                <div class="why-block">
+                    <h3>وظيفة آمنة</h3>
+                    <p>لا يمكن استبدال المطور أو خبير التقنية بالذكاء الاصطناعي، لأنه يعتمد على التفكير الأخلاقي والمنطقي واتخاذ القرارات الاستراتيجية. هذا يعني أمان وظيفي طويل الأمد ومستقبل مهني يتطور معك لا ضدك</p>
+                </div>
+            </div>
+
+            <p class="section-main-subtitle">نتعلم - نتدرب - ننجح معاً</p>
+
+            <div class="feature-card">
+                <h3>دورات احترافية</h3>
+                <p>ابدأ بتعلم أساسيات التقنية وبرمجة الروبوتات من خلال دورات منظمة وسهلة الفهم</p>
+                <div class="illustration-box">
+                    <img src="images/img2.png" alt="دورات احترافية">
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3>دعم وإرشاد</h3>
+                <p>احصل على الدعم والإرشاد والنصائح من مدربين وطلاب أكاديمية Robo Academy</p>
+                <div class="illustration-box">
+                    <img src="images/img3.png" alt="دعم وإرشاد">
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <h3>فاوتشرات الاختبار</h3>
+                <p>احصل على فاوتر اختبارك من أكاديمية Robo Academy بسهولة، وانطلق نحو شهادتك باحترافية</p>
+                <div class="illustration-box">
+                    <img src="images/img4.png" alt="فاوتشرات الاختبار">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= قسم الدورات ================= -->
+    <div id="courses-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">الدورات التدريبية</h2>
+
+            <div class="course-card">
+                <h3>دورة بايثون بالمشاريع البرمجية</h3>
+                <p class="course-platform">لغة الكورس: العربية | المدرب: حسن البروبسلي</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تعلم لغة بايثون من الصفر وحتى الاحتراف عبر مشاريع عملية</li>
+                    <li><span class="list-bullet"></span>بناء تطبيقات وبرامج حقيقية باستخدام بايثون</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">حجم الكورس: 5 جيجا بايت (مقسم إلى 3 ملفات)</span><br>
+                        <span class="course-price">السعر: 20 الف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في دورة بايثون بالمشاريع البرمجية" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>كورس إحترافي في تعلم بايثون والقرصنة الأخلاقية من الصفر</h3>
+                <p class="course-platform">Learn Python & Ethical Hacking From Scratch</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>لا يشترط وجود معرفة مسبقة، لتصل إلى مستوى متوسط عالٍ</li>
+                    <li><span class="list-bullet"></span>كتابة برامج Python وتطبيقها في اختبار اختراق أنظمة الكمبيوتر</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">الكورس محدث لأخر اصدار</span><br>
+                        <span class="course-price">السعر: 20 الف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس بايثون والقرصنة الأخلاقية" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>دورة كراك سوفت وير</h3>
+                <p class="course-platform">اللغة: إنجليزية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>شرح كيفية اختراق البرامج او عمل كرار لها بطريقة قانونية</li>
+                    <li><span class="list-bullet"></span>فهم آليات الحماية وتحليل شيفرات البرامج</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">كورس تعليمي متخصص</span><br>
+                        <span class="course-price">السعر: 10 الاف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في دورة كراك سوفت وير" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>تعلم تيرموكس من الصفر للإتقان</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تعلم استخدام تطبيق Termux وأوامره الأساسية والمتقدمة</li>
+                    <li><span class="list-bullet"></span>إعداد بيئة العمل واختبار الأبعاد الأمنية</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">كورس تعليمي متخصص</span><br>
+                        <span class="course-price">السعر: 10 الاف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس تعلم تيرموكس" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>القرصنة الأخلاقية مع كالي لينكس</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>استخدام نظام Kali Linux وأدواته الأمنية المتقدمة</li>
+                    <li><span class="list-bullet"></span>تطبيق مفاهيم واختبارات الاختراق بطريقة أخلاقية</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">كورس تعليمي متخصص</span><br>
+                        <span class="course-price">السعر: 10 الاف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في دورة القرصنة الأخلاقية مع كالي لينكس" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>تعلم أمن المعلومات</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>فهم أساسيات ومفاهيم أمن المعلومات وحماية البيانات</li>
+                    <li><span class="list-bullet"></span>التعرف على كيفية تأمين الأنظمة والشبكات ضد التهديدات</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">كورس تعليمي متخصص</span><br>
+                        <span class="course-price">السعر: 10 الاف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس أمن المعلومات" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>كورس الدارك ويب من اكاديمية صحيح</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>التعرف على خبايا وآلية عمل شبكة الإنترنت المظلم (الدارك ويب)</li>
+                    <li><span class="list-bullet"></span>فهم المخاطر الأمنية وطرق الحماية والتصفح الآمن</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">من أكاديمية صحيح</span><br>
+                        <span class="course-price">السعر: 10 الاف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس الدارك ويب" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>برمجة فيروس الفدية بأستخدام لغة البرمجة بايثون</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>دراسة آلية عمل برمجيات الفدية (Ransomware) وتحليل شيفراتها</li>
+                    <li><span class="list-bullet"></span>تعلم كيفية الحماية والتصدّي لمثل هذه الهجمات باستخدام بايثون</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">كورس برمجي وتحليلي متقدم</span><br>
+                        <span class="course-price">السعر: 50 الف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس برمجة فيروس الفدية" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>كورس أمن الويب ومكافأة الثغرات</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>كن صائداً لمكافآت الثغرات وتعلم كيفية اختراق مواقع الويب وإصلاح نقاط الضعف</li>
+                    <li><span class="list-bullet"></span>تحسين أمان الويب وحماية التطبيقات</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">كورس احترافي في صيد الثغرات</span><br>
+                        <span class="course-price">السعر: 100 الف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس أمن الويب ومكافأة الثغرات" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>كورس الهاكر الاخلاقي من اكاديمية صحيح</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تغطية شاملة لمجالات الهكر الأخلاقي المختلفة</li>
+                    <li><span class="list-bullet"></span>تطبيق عملي لمهارات الاختراق والحماية المعتمدة</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">من أكاديمية صحيح</span><br>
+                        <span class="course-price">السعر: 20 الف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس الهاكر الاخلاقي" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>إكتشاف ثغرات المواقع من اكاديمية صحيح</h3>
+                <p class="course-platform">اللغة: العربية</p>
+                <p class="course-skills-title">تفاصيل الكورس:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تعلم أساليب البحث والفحص المتقدم عن ثغرات الويب وتطبيقاتها</li>
+                    <li><span class="list-bullet"></span>تأمين المواقع الإلكترونية ومعالجة الثغرات البرمجية الشائعة</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">من أكاديمية صحيح</span><br>
+                        <span class="course-price">السعر: 30 الف دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاشتراك في كورس إكتشاف ثغرات المواقع" class="course-btn" target="_blank">اشترك الآن</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= قسم المتجر ================= -->
+    <div id="store-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">متجر الاشتراكات والخدمات</h2>
+
+            <div class="course-card">
+                <h3>Netflix</h3>
+                <p class="course-platform">اشتراكات رقمية (متجر Robo Store 1)</p>
+                <div class="illustration-box" style="flex-direction: column; gap: 10px; min-height: 150px;">
+                    <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="var(--accent-color)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2.5" y="4.5" width="19" height="13" rx="2"/>
+                        <path d="M8.5 21h7"/>
+                        <path d="M12 17.5V21"/>
+                        <path d="M9.5 8.5l5 2.5-5 2.5v-5z" fill="var(--accent-color)" stroke="none"/>
+                    </svg>
+                    <span style="color: #ffffff; font-weight: bold; font-size: 1.05rem;">Netflix</span>
+                </div>
+                <p class="course-skills-title">تفاصيل الخدمة:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>حسابات خاصة كاملة وشاشات مفردة</li>
+                    <li><span class="list-bullet"></span>باقات متاحة لمدة شهر كامل بأسعار تنافسية</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">باقة مميزة</span><br>
+                        <span class="course-price">السعر: 15,000 دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بشراء اشتراك نتفليكس" class="course-btn" target="_blank">اطلب الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>YouTube Premium</h3>
+                <p class="course-platform">خدمة البث الرقمي (متجر Robo Store 1)</p>
+                <div class="illustration-box" style="flex-direction: column; gap: 10px; min-height: 150px;">
+                    <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="var(--accent-color)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2.5" y="4.5" width="19" height="13" rx="2"/>
+                        <path d="M8.5 21h7"/>
+                        <path d="M12 17.5V21"/>
+                        <circle cx="12" cy="11" r="4" fill="none"/>
+                        <path d="M10.7 9.2l3 1.8-3 1.8v-3.6z" fill="var(--accent-color)" stroke="none"/>
+                    </svg>
+                    <span style="color: #ffffff; font-weight: bold; font-size: 1.05rem;">YouTube Premium</span>
+                </div>
+                <p class="course-skills-title">تفاصيل الخدمة:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تفعيل رسمي على الحساب الشخصي بدون إعلانات نهائياً</li>
+                    <li><span class="list-bullet"></span>ميزة التشغيل في الخلفية مع يوتيوب ميوزيك</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">تفعيل رسمي</span><br>
+                        <span class="course-price">السعر: 15,000 دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بشراء اشتراك يوتيوب بريميوم" class="course-btn" target="_blank">اطلب الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>Shahid VIP & OSN+</h3>
+                <p class="course-platform">ترفيه ومسلسلات (متجر Robo Store 1)</p>
+                <div class="illustration-box" style="flex-direction: column; gap: 10px; min-height: 150px;">
+                    <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="var(--accent-color)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2.5" y="4.5" width="19" height="13" rx="2"/>
+                        <path d="M8.5 21h7"/>
+                        <path d="M12 17.5V21"/>
+                        <path d="M6.5 4.5l2 3M11 4.5l2 3M15.5 4.5l2 3" stroke-width="1.4"/>
+                    </svg>
+                    <span style="color: #ffffff; font-weight: bold; font-size: 1.05rem;">Shahid VIP & OSN+</span>
+                </div>
+                <p class="course-skills-title">تفاصيل الخدمة:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>حسابات خاصة لمتابعة أحدث المسلسلات والأفلام بجودة عالية</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">ترفيه بلا حدود</span><br>
+                        <span class="course-price">السعر: 15,000 دينار عراقي</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بشراء اشتراك شاهد او OSN" class="course-btn" target="_blank">اطلب الآن</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= قسم الاختبارات التدريبية ================= -->
+    <div id="exams-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">الاختبارات التدريبية وقسائم الاعتماد</h2>
+            <p class="section-main-subtitle">قيم مهاراتك، تدرب على أسئلة الامتحانات الحقيقية، واحصل على فاوتشرات الاعتمادات الدولية.</p>
+
+            <div class="course-card">
+                <h3>قسائم الشهادات الدولية (Exam Vouchers)</h3>
+                <p class="course-platform">توفير قسائم اختبارات معتمدة بأسعار مخفضة</p>
+                <p class="course-skills-title">أبرز القسائم المتوفرة:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>قسائم اختبارات أمن المعلومات والقرصنة (CEH, CompTIA Security+)</li>
+                    <li><span class="list-bullet"></span>قسائم منصات التدريب المتقدمة وصيد الثغرات (PortSwigger)</li>
+                    <li><span class="list-bullet"></span>قسائم الحوسبة السحابية (AWS Certified Cloud Practitioner)</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">اعتمادات دولية معتمدة</span><br>
+                        <span class="course-price">تواصل لمعرفة الأسعار والعروض</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالاستفسار عن فاوتشرات وقسائم الاختبارات الدولية" class="course-btn" target="_blank">اطلب الفاوتشر</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>بنك الأسئلة والامتحانات التجريبية (Practice Exams)</h3>
+                <p class="course-platform">محاكاة حقيقية لبيئة الاختبارات التقنية</p>
+                <p class="course-skills-title">تفاصيل البنك:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>نماذج أسئلة تدريبية تشابه الامتحانات الرسمية مع الشرح المفصل للإجابات</li>
+                    <li><span class="list-bullet"></span>اختبارات تقييم مستوى في لغة بايثون وتحديات برمجية مقسمة لمستويات</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">تدريب تفاعلي شامل</span><br>
+                        <span class="course-price">متاح للأعضاء المشتركين</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالوصول إلى بنك الأسئلة والاختبارات التجريبية" class="course-btn" target="_blank">ابدأ التدريب</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>سيناريوهات أمنية وتحديات (Mini CTF)</h3>
+                <p class="course-platform">تطبيق عملي لاختبار مهارات الاختراق والحماية</p>
+                <p class="course-skills-title">المميزات:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تحديات سريعة في اكتشاف الثغرات وتحليل الشيفرات البرمجية</li>
+                    <li><span class="list-bullet"></span>تطوير التفكير التحليلي في مجالات الأمن السيبراني</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">تحديات تطبيقية مباشرة</span><br>
+                        <span class="course-price">مجاني للمشتركين</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، أرغب بالمشاركة في التحديات الأمنية ومختبرات الـ CTF" class="course-btn" target="_blank">خض التحدي</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= قسم المدونة ================= -->
+    <div id="blog-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">المدونة التقنية</h2>
+            <p class="section-main-subtitle">مقالات متخصصة في أخبار الثغرات، أدوات أمن المعلومات، ونصائح الإنتاجية والمطورين.</p>
+
+            <div class="course-card">
+                <h3>تحليل وفهم أشهر ثغرات الويب: كيف تحدث وكيف تحمي تطبيقاتك؟</h3>
+                <p class="course-platform">قسم: أخبار الثغرات والتحليلات الأمنية | نشر بواسطة فريق Robo Academy</p>
+                <p class="course-skills-title">محاور المقال:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>نظرة تحليلية على طبيعة الثغرات الحرجة وكيفية استغلالها من قِبل المخترقين الأخلاقيين</li>
+                    <li><span class="list-bullet"></span>طرق رصد البرمجيات الخبيثة ومعالجة الثغرات البرمجية في وقت مبكر</li>
+                    <li><span class="list-bullet"></span>أهمية تطبيق معايير الأمان المتقدمة في بناء وتطوير مواقع الإنترنت</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">قراءة ممتعة ومفيدة للمطورين</span><br>
+                        <span class="course-price">محتوى مجاني</span>
+                    </div>
+                    <button class="course-btn toggle-blog-btn" data-target="post-1">قراءة المزيد</button>
+                </div>
+                <div id="post-1" class="blog-post-content">
+                    <h4>مقدمة تفصيلية حول ثغرات الويب</h4>
+                    <p>تعتبر تطبيقات الويب الواجهة الأمامية للعديد من الشركات والمؤسسات، مما يجعلها هدفا رئيسيا للمهاجمين. فهم كيفية حدوث الثغرات مثل حقن قواعد البيانات (SQL Injection) وثغرات البرمجة عبر المواقع (XSS) هو الخطوة الأولى والأساسية لتأمين أي نظام.</p>
+                    <h4>كيف تحمي تطبيقاتك؟</h4>
+                    <p>1. التحقق من المدخلات وتعقيمها بعناية فائقة.<br>2. استخدام جدران حماية تطبيقات الويب (WAF).<br>3. إجراء فحوصات أمنية دورية ومراجعة الشيفرات البرمجية للكشف عن الثغرات المبكرة قبل استغلالها.</p>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>دليلك الشامل لإعداد بيئة العمل على نظام Kali Linux للمبتدئين</h3>
+                <p class="course-platform">قسم: شروحات كالي لينكس وأمن المعلومات</p>
+                <p class="course-skills-title">محاور المقال:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>خطوات تثبيت النظام بشكل افتراضي وآمن للتجارب العملية</li>
+                    <li><span class="list-bullet"></span>استعراض أهم الأوامر الأساسية والأدوات التي يحتاجها كل مختبر اختراق مبتدئ</li>
+                    <li><span class="list-bullet"></span>نصائح هامة لتفادي الأخطاء الشائعة أثناء تهيئة الشبكات الافتراضية</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">دليل عملي خطوة بخطوة</span><br>
+                        <span class="course-price">محتوى مجاني</span>
+                    </div>
+                    <button class="course-btn toggle-blog-btn" data-target="post-2">قراءة المزيد</button>
+                </div>
+                <div id="post-2" class="blog-post-content">
+                    <h4>لماذا نظام Kali Linux؟</h4>
+                    <p>يُعد Kali Linux نظام التشغيل المعياري الأبرز لاختبار الاختراق والتدقيق الأمني نظراً لاحتوائه مسبقاً على مئات الأدوات الجاهزة للاستخدام مثل Nmap و Wireshark و Metasploit.</p>
+                    <h4>خطوات البدء السريع:</h4>
+                    <p>قم بتثبيت النظام داخل آلة افتراضية (Virtual Machine) باستخدام برامج مثل VirtualBox أو VMware لتضمن بيئة معزولة وآمنة تماماً لأداء تجاربك واختباراتك دون التأثير على نظام التشغيل الأساسي.</p>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>أفضل الحيل وأوامر تيرموكس (Termux) لرفع إنتاجية المطورين</h3>
+                <p class="course-platform">قسم: نصائح الإنتاجية والمطورين</p>
+                <p class="course-skills-title">محاور المقال:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>كيف تستغل تطبيق Termux لتحويل هاتفك الذكي إلى محطة عمل برمجية مصغرة</li>
+                    <li><span class="list-bullet"></span>اختصارات وأوامر سريعة لتسريع إنجاز المهام واختبار السكربتات المكتوبة بلغة بايثون</li>
+                    <li><span class="list-bullet"></span>أدوات وتطبيقات مساعدة لتعزيز كفاءة المطور وتجنب تشتت التركيز</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">مهارات سريعة وتطوير ذاتي</span><br>
+                        <span class="course-price">محتوى مجاني</span>
+                    </div>
+                    <button class="course-btn toggle-blog-btn" data-target="post-3">قراءة المزيد</button>
+                </div>
+                <div id="post-3" class="blog-post-content">
+                    <h4>قوة تطبيق Termux في جيبك</h4>
+                    <p>يتيح لك تطبيق Termux تشغيل بيئة Linux كاملة على هواتف أندرويد دون الحاجة لصلاحيات الروت (Root)، مما يتيح لك تشغيل مترجم لغة بايثون، إدارة قواعد البيانات، وتجربة السكربتات في أي وقت وأي مكان.</p>
+                    <h4>أوامر أساسية للبدء:</h4>
+                    <p>تأكد دائماً من تحديث الحزم باستخدام الأمر `pkg update && pkg upgrade` قبل الشروع في تثبيت الأدوات البرمجية الخاصة بك لضمان الاستقرار والتوافق التام.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= قسم الأخبار والتحديثات ================= -->
+    <div id="news-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">الأخبار والتحديثات</h2>
+            <p class="section-main-subtitle">تابع أحدث الإصدارات، العروض الحصرية، وآخر تطويرات منصة Robo Academy.</p>
+
+            <div class="course-card">
+                <h3>إطلاق كورسات جديدة في الأمن السيبراني والقرصنة الأخلاقية</h3>
+                <p class="course-platform">تاريخ النشر: أغسطس 2026</p>
+                <p class="course-skills-title">تفاصيل الخبر:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تمت إضافة مجموعة ضخمة من الدورات الجديدة وتشمل: كورس أمن الويب، الدارك ويب، وكورس كراك السوفتوير.</li>
+                    <li><span class="list-bullet"></span>محتوى احترافي ومباشر باللغة العربية والإنجليزية ومناسب لجميع المستويات.</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">تحديثات الأكاديمية</span><br>
+                        <span class="course-price">متاح الآن</span>
+                    </div>
+                    <a href="#" class="course-btn nav-link" data-target="courses-section">تصفح الدورات</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>عروض حصرية وخصومات على اشتراكات المتجر الرقمي</h3>
+                <p class="course-platform">تاريخ النشر: أغسطس 2026</p>
+                <p class="course-skills-title">تفاصيل الخبر:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>احصل على اشتراكات Netflix, YouTube Premium, و Shahid VIP بسعر موحد ولفترة محدودة.</li>
+                    <li><span class="list-bullet"></span>تفعيل رسمي ومباشر مع ضمان كامل مدة الاشتراك عبر متجر Robo Store 1.</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">عروض المتجر</span><br>
+                        <span class="course-price">السعر الحالي: 15,000 د.ع</span>
+                    </div>
+                    <a href="#" class="course-btn nav-link" data-target="store-section">اطلب الآن</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>توفير قسائم اختبارات الشهادات الدولية (Exam Vouchers)</h3>
+                <p class="course-platform">تاريخ النشر: أغسطس 2026</p>
+                <p class="course-skills-title">تفاصيل الخبر:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>توفر قسائم معتمدة لاختبارات أمن المعلومات وصيد الثغرات وسحابة AWS بأسعار مخفضة للطلاب.</li>
+                    <li><span class="list-bullet"></span>تواصل معنا مباشرة للحصول على كود الفاوتشر الخاص بك.</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">الشهادات والاعتمادات</span><br>
+                        <span class="course-price">متوفر حسب الطلب</span>
+                    </div>
+                    <a href="#" class="course-btn nav-link" data-target="exams-section">اكتشف الفاوتشرات</a>
+                </div>
+            </div>
+
+            <div class="course-card">
+                <h3>تحديثات وتحسينات شاملة على واجهة وتجربة المنصة</h3>
+                <p class="course-platform">تاريخ النشر: أغسطس 2026</p>
+                <p class="course-skills-title">تفاصيل الخبر:</p>
+                <ul class="course-skills-list">
+                    <li><span class="list-bullet"></span>تحديث أداء الموقع ليصبح أسرع وأكثر سلاسة على الهواتف والأجهزة الذكية.</li>
+                    <li><span class="list-bullet"></span>دمج خاصية قراءة المقالات الداخلية لتجربة مستخدم أفضل وبدون أي إزعاج خارجي.</li>
+                </ul>
+                <div class="course-info-footer">
+                    <div>
+                        <span class="course-meta">تطوير مستمر</span><br>
+                        <span class="course-price">نشط الآن</span>
+                    </div>
+                    <a href="https://wa.me/9647829033849?text=مرحباً، لدي اقتراح أو استفسار بخصوص تحديثات المنصة" class="course-btn" target="_blank">شاركنا برأيك</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= قسم المطور ================= -->
+    <div id="developer-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">عن المطور</h2>
+            <p class="section-main-subtitle">تعرف على مهندس ومنشئ منصة Robo Academy و Robo Store 1.</p>
+
+            <div class="course-card" style="text-align: center;">
+                <div class="developer-avatar-container">
+                    <img src="images/img5.jpg" alt="صورة المطور مصطفى محمد" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="developer-avatar-placeholder" style="display:none;">صورة المطور</div>
+                </div>
+
+                <h3 style="color: var(--accent-color); font-size: 1.6rem; margin-bottom: 5px;">مصطفى محمد</h3>
+                <p class="course-platform" style="margin-bottom: 15px;">root404error | مطور واجهات، خبير أمن سيبراني ومؤسس المنصة</p>
+                
+                <p style="color: var(--text-muted); font-size: 0.920rem; line-height: 1.7; margin-bottom: 20px; max-width: 450px; margin-left: auto; margin-right: auto; text-align: center;">
+                    مهندس برمجيات ومختبر اختراق أخلاقي شغوف بتطوير الأنظمة الرقمية وتأمين الشبكات. أسعى لبناء بيئة تقنية عربية متكاملة تقدم محتوى عملي عالي الجودة وحلولاً رقمية موثوقة للمجتمع التقني.
+                </p>
+
+                <p class="course-skills-title" style="text-align: right; margin-bottom: 10px; justify-content: flex-start;">الإنجازات والخبرات:</p>
+                <ul class="course-skills-list" style="text-align: right; margin-bottom: 25px;">
+                    <li><span class="list-bullet"></span>مهندس برمجيات ومسؤول عن تصميم وتطوير منصة Robo Academy بالكامل.</li>
+                    <li><span class="list-bullet"></span>متخصص في الأمن السيبراني وتطوير أدوات الحماية والأنظمة الرقمية.</li>
+                    <li><span class="list-bullet"></span>إدارة متجر Robo Store 1 لتوفير الاشتراكات الرقمية والخدمات التقنية الموثوقة.</li>
+                </ul>
+                <div class="course-info-footer" style="justify-content: center;">
+                    <a href="https://t.me/robo_store1" class="course-btn" target="_blank">تواصل مع المطور</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= قسم الأسئلة الشائعة ================= -->
+    <div id="faq-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">الأسئلة الشائعة</h2>
+            
+            <div class="faq-tabs">
+                <button class="tab-btn active" data-category="all">الكل</button>
+                <button class="tab-btn" data-category="general">عام</button>
+                <button class="tab-btn" data-category="courses">الدورات</button>
+                <button class="tab-btn" data-category="store">المتجر والفاوتشرات</button>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item open" data-category="general">
+                    <div class="faq-question">
+                        ما هي أكاديمية Robo Academy وماذا تقدم؟
+                        <span>-</span>
+                    </div>
+                    <div class="faq-answer">
+                        أكاديمية تعليمية متخصصة في مجالات البرمجة، أمن المعلومات، والقرصنة الأخلاقية، وتهدف إلى تقديم دورات احترافية وتوفير الفاوتشرات للاختبارات الدولية لمساعدة الشباب العربي.
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="courses">
+                    <div class="faq-question">
+                        كيف يتم استلام الدورات بعد إتمام عملية الشراء؟
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        بعد إتمام عملية الدفع وتأكيد الطلب عبر قنوات التواصل الخاصة بنا أو الواتساب، يتم إرسال روابط تحميل الكورس مباشرة إليك.
+                    </div>
+                </div>
+
+                <div class="faq-item" data-category="store">
+                    <div class="faq-question">
+                        ما هي طرق الدفع المتوفرة لديكم؟
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        ندعم العديد من وسائل الدفع المحلية والدولية، وتستطيع التنسيق عبر الواتساب أو معرفات التليجرام الخاصة بنا لمعرفة تفاصيل التحويل المتاحة.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= قسم تواصل معنا ================= -->
+    <div id="contact-section" class="page-section">
+        <div class="container">
+            <h2 class="section-title">تواصل معنا</h2>
+            <p class="section-main-subtitle">يسعدنا تواصلكم معنا عبر أي من قنواتنا الرسمية التالية:</p>
+            <div class="contact-grid">
+                <a href="https://t.me/robo_store1" target="_blank" class="contact-card">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.02-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.25.38-.51 1.06-.78 4.15-1.81 6.91-3.01 8.28-3.61 3.94-1.72 4.76-2.02 5.29-2.03.12 0 .38.03.55.17.14.12.18.28.2.4-.02.07-.02.21-.04.38z"/></svg>
+                    <h3>قناة تليجرام</h3>
+                    <p>@robo_store1</p>
+                </a>
+                <a href="https://wa.me/9647829033849" target="_blank" class="contact-card">
+                    <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    <h3>واتساب</h3>
+                    <p>+964 7829033849</p>
+                </a>
+                <a href="mailto:pjviwsc@gmail.com" target="_blank" class="contact-card">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <h3>البريد الإلكتروني</h3>
+                    <p>pjviwsc@gmail.com</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- الفوتر -->
+    <footer>
+        <div class="footer-top">
+            <div class="footer-logo" style="display: flex; align-items: center; gap: 10px;">
+                <img src="images/img1.png" alt="Robo Academy" class="logo-icon">
+                <h2><span style="color: var(--accent-color);">R</span>obo Academy</h2>
+            </div>
+            <p class="footer-tagline">معاً نحو مستقبل أفضل في عالم التكنولوجيا</p>
+        </div>
+        <div class="footer-bottom">
+            <p>جميع الحقوق محفوظة © 2026 Robo Academy</p>
+        </div>
+    </footer>
+
+    <!-- الشريط السفلي للتنقل -->
+    <nav class="bottom-nav">
+        <a class="bottom-nav-link nav-link active" data-target="home-section" aria-label="الرئيسية">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5L12 3l9 7.5"/>
+                <path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>
+            </svg>
+            <span>الرئيسية</span>
+        </a>
+        <a class="bottom-nav-link nav-link" data-target="courses-section" aria-label="الدورات">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3L2 8l10 5 10-5-10-5z"/>
+                <path d="M6 10.5V16c0 1.5 2.5 3 6 3s6-1.5 6-3v-5.5"/>
+                <path d="M22 8v6"/>
+            </svg>
+            <span>الدورات</span>
+        </a>
+        <a class="bottom-nav-link nav-link" data-target="store-section" aria-label="المتجر">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="20" r="1.3" fill="currentColor" stroke="none"/>
+                <circle cx="17" cy="20" r="1.3" fill="currentColor" stroke="none"/>
+                <path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 7H6.2"/>
+            </svg>
+            <span>المتجر</span>
+        </a>
+        <a class="bottom-nav-link nav-link" data-target="exams-section" aria-label="الاختبارات">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4.5" width="13" height="9.5" rx="1.5"/>
+                <line x1="4.8" y1="7.7" x2="11.2" y2="7.7"/>
+                <line x1="4.8" y1="10.3" x2="9.5" y2="10.3"/>
+                <circle cx="18" cy="9.2" r="4"/>
+                <path d="M16.3 12.5L15.6 16l2.4-1.3 2.4 1.3-.7-3.5"/>
+            </svg>
+            <span>الاختبارات</span>
+        </a>
+        <a class="bottom-nav-link nav-link" data-target="contact-section" aria-label="تواصل معنا">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 3v-3H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>
+            </svg>
+            <span>تواصل معنا</span>
+        </a>
+    </nav>
+
+    <script>
+        const openMenuBtn = document.getElementById('openMenu');
+        const closeMenuBtn = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        openMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        closeMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pageSections = document.querySelectorAll('.page-section');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('data-target');
+
+                if (targetId) {
+                    pageSections.forEach(section => {
+                        section.classList.remove('active-section');
+                    });
+                    
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.classList.add('active-section');
+                    }
+
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    document.querySelectorAll(`.nav-link[data-target="${targetId}"]`).forEach(n => n.classList.add('active'));
+
+                    mobileMenu.classList.remove('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        const toggleBlogBtns = document.querySelectorAll('.toggle-blog-btn');
+        toggleBlogBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const postContent = document.getElementById(targetId);
+                
+                if (postContent.classList.contains('active')) {
+                    postContent.classList.remove('active');
+                    btn.textContent = 'قراءة المزيد';
+                } else {
+                    postContent.classList.add('active');
+                    btn.textContent = 'إخفاء التفاصيل';
+                }
+            });
+        });
+
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+                faqItems.forEach(i => {
+                    i.classList.remove('open');
+                    i.querySelector('.faq-question span').textContent = '+';
+                });
+                if (!isOpen) {
+                    item.classList.add('open');
+                    question.querySelector('span').textContent = '-';
+                }
+            });
+        });
+
+        const tabBtns = document.querySelectorAll('.faq-tabs .tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const category = btn.getAttribute('data-category');
+                faqItems.forEach(item => {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
